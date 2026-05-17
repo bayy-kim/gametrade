@@ -16,7 +16,7 @@ export async function POST(req: Request) {
   httpOnly: true,
   path: '/',
   sameSite: 'lax',      // <- tambahkan ini
-  secure: false,         // <- karena localhost tidak HTTPS
+  secure: true,         // <- karena localhost tidak HTTPS
   maxAge: 60 * 60 * 24 * 7, // 7 hari
 });
 }
