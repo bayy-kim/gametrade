@@ -1,5 +1,1 @@
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
-
-export default prisma;
+npm uninstall @prisma/adapter-libsql @libsql/client
