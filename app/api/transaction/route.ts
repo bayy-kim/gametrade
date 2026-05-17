@@ -9,16 +9,17 @@ export async function POST(req: Request) {
   const { accountId } = await req.json();
   if (!accountId) return NextResponse.json({ error: 'ID akun wajib' }, { status: 400 });
 
-  // Cek akun yang akan dibeli
+  // Cek akun
   const account = await prisma.account.findUnique({ where: { id: accountId } });
   if (!account) return NextResponse.json({ error: 'Akun tidak ditemukan' }, { status: 404 });
   if (account.status === 'sold') return NextResponse.json({ error: 'Akun sudah terjual' }, { status: 400 });
   if (account.sellerId === (user as any).id) return NextResponse.json({ error: 'Tidak bisa membeli akun sendiri' }, { status: 400 });
 
-  // Generate kode transaksi
   const transactionCode = 'TRX-' + Date.now();
+  const amount = account.price || 0;
+  const adminFee = 5000;
 
-  // Buat transaksi baru
+  // Buat transaksi dengan status escrow_hold (uang ditahan)
   const transaction = await prisma.transaction.create({
     data: {
       transactionCode,
@@ -26,16 +27,16 @@ export async function POST(req: Request) {
       buyerId: (user as any).id,
       sellerId: account.sellerId,
       accountId: account.id,
-      amount: account.price || 0,
-      adminFee: 5000,
-      status: 'completed', // langsung selesai (simulasi tanpa pembayaran)
+      amount,
+      adminFee,
+      status: 'escrow_hold', // <-- UANG DITAHAN SISTEM
     },
   });
 
-  // Tandai akun sebagai terjual
+  // Tahan akun (status jadi pending, tidak dijual ke orang lain)
   await prisma.account.update({
     where: { id: accountId },
-    data: { status: 'sold' },
+    data: { status: 'pending' },
   });
 
   return NextResponse.json({ success: true, transaction }, { status: 201 });
