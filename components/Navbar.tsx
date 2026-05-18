@@ -14,11 +14,16 @@ export default function Navbar() {
       .finally(() => setLoading(false));
   }, []);
 
-const handleLogout = async () => {
-  await fetch('/api/auth/logout', { method: 'POST' });
-  setUser(null);
-  window.location.replace('/');
-};
+  // Fungsi logout yang sudah diperbaiki
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' });
+    } catch (error) {
+      console.error('Logout fetch error:', error);
+    }
+    setUser(null);
+    window.location.replace('/');
+  };
 
   return (
     <nav className="bg-gray-900 border-b border-gray-800 px-6 py-3 grid grid-cols-3 items-center sticky top-0 z-50">
