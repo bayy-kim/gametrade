@@ -144,15 +144,31 @@ export default function ProfilePage() {
               />
             </div>
             <div>
-              <label className="text-sm text-gray-400">Avatar URL</label>
-              <input
-                type="text"
-                value={form.avatarUrl}
-                onChange={e => setForm({ ...form, avatarUrl: e.target.value })}
-                className="w-full bg-gray-700 rounded p-2 mt-1"
-                placeholder="https://..."
-              />
-            </div>
+  <label className="text-sm text-gray-400">Ganti Avatar</label>
+  <input
+    type="file"
+    accept="image/*"
+    onChange={async (e) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      // Upload ke API
+      const uploadForm = new FormData();
+      uploadForm.append('avatar', file);
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        body: uploadForm,
+      });
+      const data = await res.json();
+      if (data.url) {
+        setForm({ ...form, avatarUrl: data.url });
+        setMessage('✅ Avatar diunggah! Jangan lupa simpan perubahan.');
+      } else {
+        setMessage('❌ Gagal mengunggah avatar.');
+      }
+    }}
+    className="w-full bg-gray-700 rounded p-2 mt-1 text-sm"
+  />
+</div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="text-sm text-gray-400">Email Publik</label>
