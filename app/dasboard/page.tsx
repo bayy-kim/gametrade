@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { ShoppingBag, Package, Star, ArrowRight, PlusCircle, Search, MessageCircle } from 'lucide-react';
+import { ShoppingBag, Package, Star, ArrowRight, PlusCircle, Search } from 'lucide-react';
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -11,7 +11,6 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Ambil data user
     fetch('/api/me')
       .then(res => res.json())
       .then(data => {
@@ -20,7 +19,6 @@ export default function DashboardPage() {
           return;
         }
         setUser(data.user);
-        // Ambil statistik
         return fetch('/api/dashboard/stats');
       })
       .then(res => res?.json())
@@ -39,13 +37,10 @@ export default function DashboardPage() {
     );
   }
 
-  if (!user) {
-    return null; // akan redirect ke login
-  }
+  if (!user) return null;
 
   return (
     <div className="max-w-4xl mx-auto p-6">
-      {/* Header */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold">
           Selamat datang,{' '}
@@ -57,7 +52,6 @@ export default function DashboardPage() {
         <p className="text-gray-400 mt-1">Inilah ringkasan aktivitas akunmu.</p>
       </div>
 
-      {/* Statistik */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
         <div className="bg-gray-800 rounded-xl p-5">
           <div className="flex items-center gap-3">
@@ -108,7 +102,6 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Menu Cepat */}
       <h2 className="text-xl font-bold mb-4">Aksi Cepat</h2>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
         <Link href="/post" className="bg-gray-800 hover:bg-gray-700 rounded-xl p-5 transition group">
@@ -130,7 +123,6 @@ export default function DashboardPage() {
         </Link>
       </div>
 
-      {/* Transaksi Terbaru */}
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-bold">Transaksi Terbaru</h2>
         <Link href="/transactions" className="text-blue-400 hover:underline text-sm flex items-center gap-1">
