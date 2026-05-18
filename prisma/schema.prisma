@@ -13,6 +13,13 @@ model User {
   username     String        @unique
   email        String        @unique
   password     String
+  bio          String?
+  avatarUrl    String?
+  whatsapp     String?
+  emailPublic  String?
+  tiktok       String?
+  instagram    String?
+  twitter      String?
   role         String        @default("user")
   rating       Float         @default(0)
   totalReviews Int           @default(0)
