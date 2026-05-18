@@ -4,11 +4,10 @@ import prisma from '@/lib/prisma';
 
 
 export async function GET(
-  request: Request,
+  req: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
-
   try {
     const account = await prisma.account.findUnique({
       where: { id: parseInt(id) },
