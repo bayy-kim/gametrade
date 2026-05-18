@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { MessageCircle, User, LogOut, Plus } from 'lucide-react';
+import { MessageCircle, User, LogOut, Plus, LayoutDashboard } from 'lucide-react';
 
 export default function Navbar() {
   const [user, setUser] = useState<any>(null);
@@ -34,7 +34,9 @@ export default function Navbar() {
           <span className="text-gray-400 text-sm">Memuat...</span>
         ) : user ? (
           <>
-            <Link href="/dashboard" className="hover:text-yellow-400">Dashboard</Link>
+            <Link href="/dashboard" className="hover:text-yellow-400 flex items-center gap-1">
+  <LayoutDashboard className="w-5 h-5" /> Dashboard
+</Link>
             <Link href="/chat"><MessageCircle className="w-5 h-5" /></Link>
             <Link href="/post" className="hover:text-green-400" title="Jual/Tukar Akun">
               <Plus className="w-5 h-5" />
