@@ -31,6 +31,7 @@ export default function Navbar() {
           <span className="text-gray-400 text-sm">Memuat...</span>
         ) : user ? (
           <>
+            <Link href="/dashboard" className="hover:text-yellow-400">Dashboard</Link>
             <Link href="/post" className="hover:text-green-400">+ Jual/Tukar</Link>
             <Link href="/chat"><MessageCircle className="w-5 h-5" /></Link>
             <Link href="/my-posts">Postingan</Link>
