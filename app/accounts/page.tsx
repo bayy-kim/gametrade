@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import AccountCard from '@/components/AccountCard';
 import prisma from '@/lib/prisma';
 
