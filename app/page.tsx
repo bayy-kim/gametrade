@@ -44,8 +44,16 @@ export default async function HomePage() {
       {/* Bagian Atas: Hero Section */}
       <div className="min-h-[80vh] flex flex-col items-center justify-center">
         <h1 className="text-6xl md:text-8xl font-bold mb-4 bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
-          GameTrade
-        </h1>
+  GameTrade
+</h1>
+<p className="text-gray-300 max-w-xl mb-2 text-lg">
+  Marketplace jual beli & tukar akun game pertama dengan{' '}
+  <strong className="text-white">verifikasi AI</strong>.
+</p>
+{/* Bagian teks tambahan */}
+<p className="text-gray-500 max-w-md mb-8 text-sm italic">
+  "Jaga transaksimu, jaga akunmu. Kami hadir untuk membuat setiap tukar guling lebih aman dan terpercaya."
+</p>
         <p className="text-gray-300 max-w-xl mb-2 text-lg">
           Marketplace jual beli & tukar akun game pertama dengan{' '}
           <strong className="text-white">verifikasi AI</strong>.

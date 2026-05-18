@@ -1,21 +1,17 @@
 'use client';
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { LogIn, User, Lock, AlertCircle, CheckCircle } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 export default function LoginPage() {
-  const router = useRouter();
   const [usernameOrEmail, setUsernameOrEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-    setSuccess('');
     setLoading(true);
     try {
       const res = await fetch('/api/auth/login', {
@@ -27,10 +23,7 @@ export default function LoginPage() {
       if (!res.ok) {
         setError(data.error || 'Login gagal.');
       } else {
-        setSuccess('Login berhasil! Mengalihkan...');
-        setTimeout(() => {
-          window.location.href = '/';
-        }, 1000);
+        window.location.href = '/';
       }
     } catch (err) {
       setError('Terjadi kesalahan jaringan.');
@@ -39,110 +32,114 @@ export default function LoginPage() {
     }
   };
 
+  // Variants TANPA properti transition
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      // transition untuk stagger diletakkan di prop component nanti
+    },
+  };
+
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: { y: 0, opacity: 1 },
+  };
+
   return (
-    <div className="min-h-[80vh] flex items-center justify-center px-4">
-      {/* Card dengan animasi gradien */}
-      <div className="relative w-full max-w-md">
-        {/* Background glow animasi */}
-        <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-2xl blur-xl opacity-50 animate-pulse" />
+    <div className="max-w-md mx-auto p-6 mt-10">
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <h2 className="text-3xl font-bold mb-6 text-center">Login</h2>
+      </motion.div>
 
-        {/* Card utama */}
-        <div className="relative bg-gray-900 rounded-2xl p-8 shadow-2xl border border-gray-800">
-          {/* Logo / Judul */}
-          <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 mb-4 animate-bounce">
-              <LogIn className="w-8 h-8 text-white" />
-            </div>
-            <h2 className="text-3xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
-              Selamat Datang
-            </h2>
-            <p className="text-gray-400 text-sm mt-1">Login ke akun GameTrade kamu</p>
-          </div>
+      <motion.form
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+        // transition diletakkan di sini sebagai prop, bukan di dalam variants
+        transition={{ staggerChildren: 0.1, delayChildren: 0.2 }}
+        onSubmit={handleLogin}
+        className="bg-gray-800 rounded-xl p-6 space-y-4"
+      >
+        {error && (
+          <motion.p
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="text-red-400 text-sm text-center"
+          >
+            {error}
+          </motion.p>
+        )}
 
-          {/* Pesan Error / Sukses dengan animasi */}
-          {error && (
-            <div className="mb-4 p-3 bg-red-900/50 border border-red-700 rounded-lg flex items-center gap-2 animate-shake">
-              <AlertCircle className="w-4 h-4 text-red-400 flex-shrink-0" />
-              <span className="text-red-300 text-sm">{error}</span>
-            </div>
-          )}
-          {success && (
-            <div className="mb-4 p-3 bg-green-900/50 border border-green-700 rounded-lg flex items-center gap-2">
-              <CheckCircle className="w-4 h-4 text-green-400 flex-shrink-0" />
-              <span className="text-green-300 text-sm">{success}</span>
-            </div>
-          )}
+        {/* Setiap item diberi transition di level komponen */}
+        <motion.div
+          variants={itemVariants}
+          transition={{ duration: 0.5, ease: 'easeOut' }}
+        >
+          <label className="block mb-1">Username atau Email</label>
+          <input
+            type="text"
+            value={usernameOrEmail}
+            onChange={(e) => setUsernameOrEmail(e.target.value)}
+            className="w-full bg-gray-700 rounded p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+            placeholder="Username atau email"
+            required
+          />
+        </motion.div>
 
-          {/* Form */}
-          <form onSubmit={handleLogin} className="space-y-5">
-            {/* Input Username/Email */}
-            <div>
-              <label className="block text-sm text-gray-400 mb-1">Username atau Email</label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <User className="w-4 h-4 text-gray-500" />
-                </div>
-                <input
-                  type="text"
-                  value={usernameOrEmail}
-                  onChange={(e) => setUsernameOrEmail(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30 outline-none transition-all duration-300 text-white placeholder-gray-500"
-                  placeholder="Username atau email"
-                  required
-                />
-              </div>
-            </div>
+        <motion.div
+          variants={itemVariants}
+          transition={{ duration: 0.5, ease: 'easeOut' }}
+        >
+          <label className="block mb-1">Password</label>
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full bg-gray-700 rounded p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+            required
+          />
+        </motion.div>
 
-            {/* Input Password */}
-            <div>
-              <label className="block text-sm text-gray-400 mb-1">Password</label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Lock className="w-4 h-4 text-gray-500" />
-                </div>
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30 outline-none transition-all duration-300 text-white placeholder-gray-500"
-                  placeholder="••••••••"
-                  required
-                />
-              </div>
-            </div>
+        <motion.div
+          variants={itemVariants}
+          transition={{ duration: 0.5, ease: 'easeOut' }}
+        >
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-blue-600 hover:bg-blue-700 py-2 rounded font-bold disabled:opacity-50 transition-all hover:scale-[1.02] active:scale-[0.98]"
+          >
+            {loading ? (
+              <span className="flex items-center justify-center gap-2">
+                <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Memproses...
+              </span>
+            ) : (
+              'Masuk'
+            )}
+          </button>
+        </motion.div>
+      </motion.form>
 
-            {/* Tombol Login dengan animasi loading */}
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full py-3 rounded-lg font-bold text-white bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 transition-all duration-300 transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center gap-2"
-            >
-              {loading ? (
-                <>
-                  <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                  </svg>
-                  Memproses...
-                </>
-              ) : (
-                <>
-                  <LogIn className="w-4 h-4" />
-                  Masuk
-                </>
-              )}
-            </button>
-          </form>
-
-          {/* Link ke Register */}
-          <p className="text-center mt-6 text-gray-400 text-sm">
-            Belum punya akun?{' '}
-            <Link href="/register" className="text-blue-400 hover:text-blue-300 hover:underline transition-colors">
-              Daftar di sini
-            </Link>
-          </p>
-        </div>
-      </div>
+      <motion.p
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.8 }}
+        className="text-center mt-4 text-gray-400"
+      >
+        Belum punya akun?{' '}
+        <Link href="/login" className="text-blue-400 hover:underline">
+          Daftar
+        </Link>
+      </motion.p>
     </div>
   );
 }
