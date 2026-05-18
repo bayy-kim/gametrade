@@ -9,6 +9,13 @@ export default function ChatPage() {
   const [reported, setReported] = useState(false);
   const [reportReason, setReportReason] = useState('');
   const [showReport, setShowReport] = useState(false);
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    fetch('/api/me')
+      .then(res => res.json())
+      .then(data => setUser(data.user));
+  }, []);
 
   const fetchChats = () => {
     fetch(`/api/chat/${userId}`)
