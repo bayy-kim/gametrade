@@ -21,11 +21,11 @@ export default function LoginPage() {
         body: JSON.stringify({ usernameOrEmail, password }),
       });
       const data = await res.json();
-      if (!res.ok) {
-        setError(data.error || 'Login gagal.');
-      } else {
-        router.push('/');
-        router.refresh();
+      if (res.ok) {
+  // Beri tahu seluruh aplikasi bahwa user sudah login
+  window.dispatchEvent(new Event('login-success'));
+  router.push('/');
+  router.refresh();
       }
     } catch (err) {
       setError('Terjadi kesalahan jaringan.');

@@ -8,17 +8,31 @@ export default function Navbar() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+  // Fungsi untuk mengambil data user
+  const fetchUser = () => {
     fetch('/api/me')
       .then(res => res.json())
       .then(data => setUser(data.user))
       .finally(() => setLoading(false));
-  }, []);
-
-  const handleLogout = async () => {
-    await fetch('/api/auth/logout', { method: 'POST' });
-    setUser(null);
-    window.location.href = '/';
   };
+  
+  fetchUser();
+  const handleLoginSuccess = () => {
+    setLoading(true);
+    fetchUser();
+  };
+  window.addEventListener('login-success', handleLoginSuccess);
+  return () => {
+    window.removeEventListener('login-success', handleLoginSuccess);
+  };
+}, []);
+
+ const handleLogout = async () => {
+  await fetch('/api/auth/logout', { method: 'POST' });
+  setUser(null);
+  window.location.assign('/');
+};
+
 
   return (
     <nav className="bg-gray-900 border-b border-gray-800 px-6 py-3 flex items-center justify-between sticky top-0 z-50">
