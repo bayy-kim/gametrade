@@ -34,13 +34,13 @@ export async function POST(req: Request) {
 
   const response = NextResponse.json({ ok: true });
 
-  response.cookies.set('token', token, {
-    httpOnly: true,
-    path: '/',
-    secure: true,
-    sameSite: 'lax',
-    maxAge: 60 * 60 * 24 * 7,
-  });
+response.cookies.set('token', token, {
+  httpOnly: true,
+  path: '/',
+  secure: true,
+  sameSite: 'lax',
+  maxAge: 60 * 60 * 24 * 7,
+});
 
   return response;
 }
