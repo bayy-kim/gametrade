@@ -60,13 +60,17 @@ export default async function TransactionsPage() {
                     {trx.amount ? `Rp ${trx.amount.toLocaleString()}` : '-'}
                   </td>
                   <td className="p-3">
-                    <span className={`px-2 py-0.5 rounded text-xs ${
-                      trx.status === 'completed' ? 'bg-green-900 text-green-300' :
-                      trx.status === 'pending' ? 'bg-yellow-900 text-yellow-300' :
-                      'bg-red-900 text-red-300'
-                    }`}>
-                      {trx.status}
-                    </span>
+                    // Di bagian status, ubah pengecekan warnanya:
+                        <span className={`px-2 py-0.5 rounded text-xs ${
+                        trx.status === 'completed' ? 'bg-green-900 text-green-300' :
+                        trx.status === 'escrow_hold' ? 'bg-blue-900 text-blue-300' :
+                        trx.status === 'pending' ? 'bg-yellow-900 text-yellow-300' :
+                        'bg-red-900 text-red-300'
+                        }`}>
+                        {trx.status === 'completed' ? 'Selesai' :
+                        trx.status === 'escrow_hold' ? 'Escrow' :
+                        trx.status === 'pending' ? 'Pending' : trx.status}
+                        </span>
                   </td>
                   <td className="p-3 text-gray-400 text-sm">
                     {new Date(trx.createdAt).toLocaleDateString('id-ID')}

@@ -5,7 +5,7 @@ import Link from 'next/link';
 
 export default function LoginPage() {
   const router = useRouter();
-  const [email, setEmail] = useState('');
+  const [usernameOrEmail, setUsernameOrEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -18,7 +18,7 @@ export default function LoginPage() {
       const res = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ usernameOrEmail, password }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -40,12 +40,13 @@ export default function LoginPage() {
       <form onSubmit={handleLogin} className="bg-gray-800 rounded-xl p-6 space-y-4">
         {error && <p className="text-red-400 text-sm text-center">{error}</p>}
         <div>
-          <label className="block mb-1">Email</label>
+  <label className="block mb-1">Username atau Email</label>
           <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            type="text"
+            value={usernameOrEmail}
+            onChange={(e) => setUsernameOrEmail(e.target.value)}
             className="w-full bg-gray-700 rounded p-2"
+            placeholder="Username atau email"
             required
           />
         </div>

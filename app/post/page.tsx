@@ -41,43 +41,63 @@ export default function PostPage() {
   };
 
   // Kirim data ke API
-  const handleSubmit = async () => {
-    setPosting(true);
-    setMessage('');
+const handleSubmit = async () => {
+  setPosting(true);
+  setMessage('');
 
-    const body = {
-      game,
-      gameId,
-      serverId: game === 'ML' ? serverId : undefined,
-      accountRank: rank,
-      price: price || null,
-      tradeOnly: !price,
-      screenshots: screenshots.map(() => 'dummy-url'), // nanti ganti setelah upload gambar beneran
-    };
-
-    try {
-      const res = await fetch('/api/accounts', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-      });
-
-      if (res.ok) {
-        setMessage('🎉 Akun berhasil diposting!');
-        setTimeout(() => {
-          router.push('/accounts');
-          router.refresh();
-        }, 1000);
-      } else {
-        const data = await res.json();
-        setMessage(`❌ ${data.error || 'Gagal posting akun'}`);
-      }
-    } catch (error) {
-      setMessage('❌ Terjadi kesalahan jaringan');
-    } finally {
-      setPosting(false);
-    }
+  const body = {
+    game,
+    gameId,
+    serverId: game === 'ML' ? serverId : undefined,
+    accountRank: rank,
+    price: price || null,
+    tradeOnly: !price,
+    screenshots: screenshots.map(() => 'dummy-url'), // sementara
   };
+
+  try {
+    // 1. Posting akun dulu (status: pending)
+    const postRes = await fetch('/api/accounts', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+    if (!postRes.ok) {
+      const err = await postRes.json();
+      setMessage(`❌ ${err.error || 'Gagal posting'}`);
+      setPosting(false);
+      return;
+    }
+    const newAccount = await postRes.json();
+
+    // 2. Verifikasi AI
+    setMessage('🔍 Memverifikasi akun...');
+    const verifyRes = await fetch('/api/verify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        accountId: newAccount.id,
+        gameId: body.gameId,
+        screenshots: body.screenshots,
+      }),
+    });
+    const verifyData = await verifyRes.json();
+
+    if (verifyData.verifiedByAi) {
+      setMessage('🎉 Akun lolos verifikasi dan sudah tayang!');
+      setTimeout(() => {
+        router.push('/accounts');
+        router.refresh();
+      }, 1500);
+    } else {
+      setMessage('❌ Akun tidak lolos verifikasi. Cek ID game dan screenshot.');
+    }
+  } catch (error) {
+    setMessage('❌ Kesalahan jaringan');
+  } finally {
+    setPosting(false);
+  }
+};
 
   return (
     <div className="max-w-xl mx-auto p-6">
