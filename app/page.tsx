@@ -54,10 +54,6 @@ export default async function HomePage() {
 <p className="text-gray-500 max-w-md mb-8 text-sm italic">
   "Jaga transaksimu, jaga akunmu. Kami hadir untuk membuat setiap tukar guling lebih aman dan terpercaya."
 </p>
-        <p className="text-gray-300 max-w-xl mb-2 text-lg">
-          Marketplace jual beli & tukar akun game pertama dengan{' '}
-          <strong className="text-white">verifikasi AI</strong>.
-        </p>
         <p className="text-gray-400 max-w-md mb-8 text-sm">
           Setiap akun dicek keasliannya sebelum tayang. Transaksi aman dengan sistem escrow.
           Biaya admin hanya Rp5.000.
