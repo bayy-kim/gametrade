@@ -13,7 +13,7 @@ export function middleware(request: NextRequest) {
   }
 
   // Halaman yang wajib login
-  const protectedPaths = ['/post', '/profile', '/chat', '/transactions', '/dashboard', '/my-posts', '/admin'];
+  const protectedPaths = ['/post', '/profile','/dashboard', '/chat', '/transactions', '/my-posts', '/admin'];
   if (!user && protectedPaths.some(path => request.nextUrl.pathname.startsWith(path))) {
     return NextResponse.redirect(new URL('/login', request.url));
   }
@@ -22,5 +22,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/login', '/register', '/post', '/profile', '/chat', '/transactions'],
+  matcher: ['/login', '/register', '/post','/dashboard', '/profile', '/chat', '/transactions'],
 };
