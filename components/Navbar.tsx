@@ -8,72 +8,60 @@ export default function Navbar() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-  // Fungsi untuk mengambil data user
-  const fetchUser = () => {
     fetch('/api/me')
       .then(res => res.json())
       .then(data => setUser(data.user))
       .finally(() => setLoading(false));
-  };
+  }, []);
 
-  fetchUser();
-  const handleLoginSuccess = () => {
-    setLoading(true);
-    fetchUser();
+  const handleLogout = async () => {
+    await fetch('/api/auth/logout', { method: 'POST' });
+    setUser(null);
+    window.location.assign('/');
   };
-  window.addEventListener('login-success', handleLoginSuccess);
-  return () => {
-    window.removeEventListener('login-success', handleLoginSuccess);
-  };
-}, []);
-
- const handleLogout = async () => {
-  await fetch('/api/auth/logout', { method: 'POST' });
-  setUser(null);
-  window.location.assign('/');
-};
-
 
   return (
-   <nav className="bg-gray-900 border-b border-gray-800 px-6 py-3 grid grid-cols-3 items-center sticky top-0 z-50">
-  {/* Kiri: Tombol Tambah (hanya jika login) */}
-  <div className="flex items-center">
-    {user && (
-      <Link href="/post" className="hover:text-green-400" title="Jual/Tukar Akun">
-        <Plus className="w-5 h-5" />
-      </Link>
-    )}
-  </div>
+    <nav className="bg-gray-900 border-b border-gray-800 px-6 py-3 grid grid-cols-3 items-center sticky top-0 z-50">
+      {/* Kiri: Semua menu (Market, Dashboard, Chat, + Jual/Tukar) */}
+      <div className="flex items-center gap-4">
+        <Link href="/accounts" className="hover:text-blue-400">Market</Link>
+        {loading ? (
+          <span className="text-gray-400 text-sm">Memuat...</span>
+        ) : user ? (
+          <>
+            <Link href="/dashboard" className="hover:text-yellow-400">Dashboard</Link>
+            <Link href="/chat"><MessageCircle className="w-5 h-5" /></Link>
+            <Link href="/post" className="hover:text-green-400" title="Jual/Tukar Akun">
+              <Plus className="w-5 h-5" />
+            </Link>
+          </>
+        ) : null}
+      </div>
 
-  {/* Tengah: Logo GameTrade */}
-  <div className="flex justify-center">
-    <Link href="/" className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
-      GameTrade
-    </Link>
-  </div>
-
-  {/* Kanan: Menu lainnya */}
-  <div className="flex gap-4 items-center justify-end">
-    <Link href="/accounts" className="hover:text-blue-400">Market</Link>
-    {loading ? (
-      <span className="text-gray-400 text-sm">Memuat...</span>
-    ) : user ? (
-      <>
-        <Link href="/dashboard" className="hover:text-yellow-400">Dashboard</Link>
-        <Link href="/chat"><MessageCircle className="w-5 h-5" /></Link>
-        <Link href="/profile" className="flex items-center gap-1 hover:text-blue-400">
-          <User className="w-5 h-5" />
-          <span>{user.username}</span>
+      {/* Tengah: Logo GameTrade */}
+      <div className="flex justify-center">
+        <Link href="/" className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+          GameTrade
         </Link>
-        <button onClick={handleLogout} className="text-red-400"><LogOut className="w-5 h-5" /></button>
-      </>
-    ) : (
-      <>
-        <Link href="/login" className="hover:text-blue-400 px-2">Login</Link>
-        <Link href="/register" className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded">Daftar</Link>
-      </>
-    )}
-  </div>
-</nav>
+      </div>
+
+      {/* Kanan: Profil & Logout (atau Login/Daftar) */}
+      <div className="flex gap-4 items-center justify-end">
+        {loading ? null : user ? (
+          <>
+            <Link href="/profile" className="flex items-center gap-1 hover:text-blue-400">
+              <User className="w-5 h-5" />
+              <span>{user.username}</span>
+            </Link>
+            <button onClick={handleLogout} className="text-red-400"><LogOut className="w-5 h-5" /></button>
+          </>
+        ) : (
+          <>
+            <Link href="/login" className="hover:text-blue-400 px-2">Login</Link>
+            <Link href="/register" className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded">Daftar</Link>
+          </>
+        )}
+      </div>
+    </nav>
   );
 }
