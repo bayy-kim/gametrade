@@ -1,18 +1,13 @@
 import { getUserFromCookie } from '@/lib/auth';
 import prisma from '@/lib/prisma';
+import Link from 'next/link';
 
 export default async function TransactionsPage() {
   const user = await getUserFromCookie();
-
   if (!user) {
-    return (
-      <div className="max-w-4xl mx-auto p-6 text-center text-gray-400">
-        Silakan login untuk melihat riwayat transaksi.
-      </div>
-    );
+    return <div className="max-w-4xl mx-auto p-6 text-center text-gray-400">Silakan login.</div>;
   }
 
-  // Ambil transaksi yang melibatkan user sebagai pembeli atau penjual
   const transactions = await prisma.transaction.findMany({
     where: {
       OR: [
@@ -27,6 +22,22 @@ export default async function TransactionsPage() {
     },
     orderBy: { createdAt: 'desc' },
   });
+
+  const statusLabels: Record<string, string> = {
+    pending: 'Menunggu Pembayaran',
+    escrow_hold: 'Uang Ditahan',
+    account_sent: 'Akun Diserahkan',
+    completed: 'Selesai',
+    disputed: 'Sengketa',
+  };
+
+  const statusColors: Record<string, string> = {
+    pending: 'bg-yellow-900 text-yellow-300',
+    escrow_hold: 'bg-blue-900 text-blue-300',
+    account_sent: 'bg-purple-900 text-purple-300',
+    completed: 'bg-green-900 text-green-300',
+    disputed: 'bg-red-900 text-red-300',
+  };
 
   return (
     <div className="max-w-4xl mx-auto p-6">
@@ -56,21 +67,11 @@ export default async function TransactionsPage() {
                   <td className="p-3">{trx.account?.game}</td>
                   <td className="p-3">{trx.buyer?.username}</td>
                   <td className="p-3">{trx.seller?.username}</td>
+                  <td className="p-3">{trx.amount ? `Rp ${trx.amount.toLocaleString()}` : '-'}</td>
                   <td className="p-3">
-                    {trx.amount ? `Rp ${trx.amount.toLocaleString()}` : '-'}
-                  </td>
-                  <td className="p-3">
-                    // Di bagian status, ubah pengecekan warnanya:
-                        <span className={`px-2 py-0.5 rounded text-xs ${
-                        trx.status === 'completed' ? 'bg-green-900 text-green-300' :
-                        trx.status === 'escrow_hold' ? 'bg-blue-900 text-blue-300' :
-                        trx.status === 'pending' ? 'bg-yellow-900 text-yellow-300' :
-                        'bg-red-900 text-red-300'
-                        }`}>
-                        {trx.status === 'completed' ? 'Selesai' :
-                        trx.status === 'escrow_hold' ? 'Escrow' :
-                        trx.status === 'pending' ? 'Pending' : trx.status}
-                        </span>
+                    <span className={`px-2 py-0.5 rounded text-xs ${statusColors[trx.status] || 'bg-gray-700'}`}>
+                      {statusLabels[trx.status] || trx.status}
+                    </span>
                   </td>
                   <td className="p-3 text-gray-400 text-sm">
                     {new Date(trx.createdAt).toLocaleDateString('id-ID')}
