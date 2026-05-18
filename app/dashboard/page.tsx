@@ -2,8 +2,10 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { ShoppingBag, Package, Star, ArrowRight, PlusCircle, Search } from 'lucide-react';
-
+import {
+  ShoppingBag, Package, Star, ArrowRight,
+  PlusCircle, Search, Clock, CheckCircle, XCircle,
+} from 'lucide-react';
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -32,7 +34,7 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div className="max-w-4xl mx-auto p-6 text-center text-gray-400">
+      <div className="max-w-6xl mx-auto p-6 text-center text-gray-400">
         Memuat dashboard...
       </div>
     );
@@ -41,7 +43,8 @@ export default function DashboardPage() {
   if (!user) return null;
 
   return (
-    <div className="max-w-4xl mx-auto p-6">
+    <div className="max-w-6xl mx-auto p-6">
+      {/* Header */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold">
           Selamat datang,{' '}
@@ -50,9 +53,10 @@ export default function DashboardPage() {
           </span>
           !
         </h1>
-        <p className="text-gray-400 mt-1">Inilah ringkasan aktivitas akunmu.</p>
+        <p className="text-gray-400 mt-1">Ringkasan aktivitas akunmu.</p>
       </div>
 
+      {/* Statistik */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
         <div className="bg-gray-800 rounded-xl p-5">
           <div className="flex items-center gap-3">
@@ -103,6 +107,7 @@ export default function DashboardPage() {
         </div>
       </div>
 
+      {/* Aksi Cepat */}
       <h2 className="text-xl font-bold mb-4">Aksi Cepat</h2>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
         <Link href="/post" className="bg-gray-800 hover:bg-gray-700 rounded-xl p-5 transition group">
@@ -124,37 +129,94 @@ export default function DashboardPage() {
         </Link>
       </div>
 
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-bold">Transaksi Terbaru</h2>
-        <Link href="/transactions" className="text-blue-400 hover:underline text-sm flex items-center gap-1">
-          Lihat semua <ArrowRight className="w-4 h-4" />
-        </Link>
-      </div>
-      <div className="bg-gray-800 rounded-xl p-5">
-        {stats?.recentTransactions?.length > 0 ? (
-          <div className="space-y-3">
-            {stats.recentTransactions.map((trx: any) => (
-              <div key={trx.id} className="flex justify-between items-center border-b border-gray-700 pb-2 last:border-0">
-                <div>
-                  <p className="font-bold">{trx.transactionCode}</p>
-                  <p className="text-sm text-gray-400">
-                    {trx.type === 'buy_sell' ? 'Pembelian' : 'Tukar'} • {trx.account?.game || '-'}
-                  </p>
-                </div>
-                <div className="text-right">
-                  <p className={trx.status === 'completed' ? 'text-green-400' : 'text-yellow-400'}>
-                    {trx.status === 'completed' ? 'Selesai' : trx.status}
-                  </p>
-                  <p className="text-sm text-gray-400">
-                    {new Date(trx.createdAt).toLocaleDateString('id-ID')}
-                  </p>
-                </div>
-              </div>
-            ))}
+      {/* Dua Kolom: Postingan Terbaru & Transaksi Terbaru */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Postingan Terbaru */}
+        <div>
+          <div className="flex justify-between items-center mb-3">
+            <h2 className="text-xl font-bold flex items-center gap-2">
+              <Package className="w-5 h-5 text-blue-400" /> Postingan Terbaru
+            </h2>
+            <Link href="/my-posts" className="text-blue-400 hover:underline text-sm flex items-center gap-1">
+              Lihat semua <ArrowRight className="w-4 h-4" />
+            </Link>
           </div>
-        ) : (
-          <p className="text-gray-400 text-center">Belum ada transaksi.</p>
-        )}
+          <div className="bg-gray-800 rounded-xl p-4">
+            {stats?.recentPosts?.length > 0 ? (
+              <div className="space-y-3">
+                {stats.recentPosts.map((post: any) => (
+                  <Link
+                    key={post.id}
+                    href={`/accounts/${post.id}`}
+                    className="flex justify-between items-center border-b border-gray-700 pb-2 last:border-0 hover:bg-gray-750 p-2 rounded transition"
+                  >
+                    <div>
+                      <p className="font-bold">{post.game} • {post.accountRank || 'Tanpa rank'}</p>
+                      <p className="text-sm text-gray-400">ID: {post.gameId}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className={`text-sm ${
+                        post.status === 'active' ? 'text-green-400' :
+                        post.status === 'pending' ? 'text-yellow-400' : 'text-red-400'
+                      }`}>
+                        {post.status === 'active' ? 'Aktif' :
+                         post.status === 'pending' ? 'Pending' : 'Ditolak'}
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        {new Date(post.createdAt).toLocaleDateString('id-ID')}
+                      </p>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            ) : (
+              <p className="text-gray-400 text-center text-sm">Belum ada postingan.</p>
+            )}
+          </div>
+        </div>
+
+        {/* Transaksi Terbaru */}
+        <div>
+          <div className="flex justify-between items-center mb-3">
+            <h2 className="text-xl font-bold flex items-center gap-2">
+              <ShoppingBag className="w-5 h-5 text-green-400" /> Transaksi Terbaru
+            </h2>
+            <Link href="/transactions" className="text-blue-400 hover:underline text-sm flex items-center gap-1">
+              Lihat semua <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+          <div className="bg-gray-800 rounded-xl p-4">
+            {stats?.recentTransactions?.length > 0 ? (
+              <div className="space-y-3">
+                {stats.recentTransactions.map((trx: any) => (
+                  <div
+                    key={trx.id}
+                    className="flex justify-between items-center border-b border-gray-700 pb-2 last:border-0 p-2 rounded"
+                  >
+                    <div>
+                      <p className="font-bold text-sm">{trx.transactionCode}</p>
+                      <p className="text-xs text-gray-400">
+                        {trx.type === 'buy_sell' ? 'Pembelian' : 'Tukar'} • {trx.account?.game || '-'}
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p className={`text-sm ${
+                        trx.status === 'completed' ? 'text-green-400' : 'text-yellow-400'
+                      }`}>
+                        {trx.status === 'completed' ? 'Selesai' : trx.status}
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        {new Date(trx.createdAt).toLocaleDateString('id-ID')}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-gray-400 text-center text-sm">Belum ada transaksi.</p>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );

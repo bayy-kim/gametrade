@@ -12,12 +12,17 @@ export async function GET() {
 
   const userId = (user as any).id;
 
-  const [totalPosts, totalTransactions, recentTransactions] = await Promise.all([
+  const [totalPosts, totalTransactions, recentPosts, recentTransactions] = await Promise.all([
     prisma.account.count({ where: { sellerId: userId } }),
     prisma.transaction.count({
       where: {
         OR: [{ buyerId: userId }, { sellerId: userId }],
       },
+    }),
+    prisma.account.findMany({
+      where: { sellerId: userId },
+      orderBy: { createdAt: 'desc' },
+      take: 5,
     }),
     prisma.transaction.findMany({
       where: {
@@ -25,6 +30,8 @@ export async function GET() {
       },
       include: {
         account: { select: { game: true } },
+        buyer: { select: { username: true } },
+        seller: { select: { username: true } },
       },
       orderBy: { createdAt: 'desc' },
       take: 5,
@@ -34,6 +41,7 @@ export async function GET() {
   return NextResponse.json({
     totalPosts,
     totalTransactions,
+    recentPosts,
     recentTransactions,
   });
 }
