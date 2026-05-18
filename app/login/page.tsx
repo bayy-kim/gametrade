@@ -22,11 +22,8 @@ export default function LoginPage() {
       });
       const data = await res.json();
       if (res.ok) {
-  // Beri tahu seluruh aplikasi bahwa user sudah login
-  window.dispatchEvent(new Event('login-success'));
-  router.push('/');
-  router.refresh();
-      }
+  window.location.href = '/';
+}
     } catch (err) {
       setError('Terjadi kesalahan jaringan.');
     } finally {
