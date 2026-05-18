@@ -15,7 +15,7 @@ export default function Navbar() {
       .then(data => setUser(data.user))
       .finally(() => setLoading(false));
   };
-  
+
   fetchUser();
   const handleLoginSuccess = () => {
     setLoading(true);
@@ -48,8 +48,6 @@ export default function Navbar() {
             <Link href="/dashboard" className="hover:text-yellow-400">Dashboard</Link>
             <Link href="/post" className="hover:text-green-400">+ Jual/Tukar</Link>
             <Link href="/chat"><MessageCircle className="w-5 h-5" /></Link>
-            <Link href="/my-posts">Postingan</Link>
-            <Link href="/transactions">Riwayat</Link>
             <Link href="/profile" className="flex items-center gap-1 hover:text-blue-400">
               <User className="w-5 h-5" />
               <span>{user.username}</span>
