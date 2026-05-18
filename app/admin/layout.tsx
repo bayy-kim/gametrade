@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Shield, Palette, Users, ShoppingBag, LayoutDashboard, Search } from 'lucide-react';
+import { Shield,Search } from 'lucide-react';
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
