@@ -66,6 +66,11 @@ export default function ProfilePage() {
 
   if (loading) return <div className="max-w-2xl mx-auto p-6 text-center">Memuat...</div>;
   if (!user) return null;
+  
+  const handleLogout = async () => {
+  await fetch('/api/auth/logout', { method: 'POST' });
+  window.location.href = '/';
+};
 
   return (
     <div className="max-w-2xl mx-auto p-6">
@@ -233,11 +238,9 @@ export default function ProfilePage() {
       </div>
 
       {/* Tombol Logout */}
-      <form action="/api/auth/logout" method="POST">
-        <button type="submit" className="w-full bg-red-600 hover:bg-red-700 py-2 rounded font-bold">
-          Logout
-        </button>
-      </form>
+      <button onClick={handleLogout} className="w-full bg-red-600 hover:bg-red-700 py-2 rounded font-bold">
+  Logout
+</button>
     </div>
   );
 }
