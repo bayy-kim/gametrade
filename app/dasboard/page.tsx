@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { ShoppingBag, Package, Star, ArrowRight, PlusCircle, Search } from 'lucide-react';
 
+
 export default function DashboardPage() {
   const router = useRouter();
   const [user, setUser] = useState<any>(null);
