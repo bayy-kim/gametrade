@@ -14,11 +14,11 @@ export default function Navbar() {
       .finally(() => setLoading(false));
   }, []);
 
-  const handleLogout = async () => {
-    await fetch('/api/auth/logout', { method: 'POST' });
-    setUser(null);
-    window.location.assign('/');
-  };
+const handleLogout = async () => {
+  await fetch('/api/auth/logout', { method: 'POST' });
+  setUser(null);
+  window.location.href = '/';
+};
 
   return (
     <nav className="bg-gray-900 border-b border-gray-800 px-6 py-3 grid grid-cols-3 items-center sticky top-0 z-50">
@@ -45,7 +45,7 @@ export default function Navbar() {
         </Link>
       </div>
 
-      {/* Kanan: Profil & Logout (atau Login/Daftar) */}
+
       <div className="flex gap-4 items-center justify-end">
         {loading ? null : user ? (
           <>
