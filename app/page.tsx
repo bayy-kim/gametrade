@@ -33,6 +33,14 @@ export default async function HomePage() {
           >
             <ArrowRight className="w-5 h-5" /> Jual / Tukar Akun
           </Link>
+          {(user as any).role === 'admin' && (
+  <Link
+    href="/admin"
+    className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg font-semibold flex items-center gap-2"
+  >
+    🛡️ Admin Panel
+  </Link>
+)}
         </div>
       </div>
     );

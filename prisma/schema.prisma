@@ -15,6 +15,7 @@ model User {
   password     String
   bio          String?
   avatarUrl    String?
+  isBanned      Boolean       @default(false)
   whatsapp     String?
   emailPublic  String?
   tiktok       String?
@@ -27,6 +28,10 @@ model User {
   accounts     Account[]
   transactions Transaction[] @relation("TransactionBuyer")
   soldAccounts Transaction[] @relation("TransactionSeller")
+  sentChats     Chat[]        @relation("SentChats")
+  receivedChats Chat[]        @relation("ReceivedChats")
+  reportsMade     Report[]     @relation("ReportsMade")
+  reportsReceived Report[]     @relation("ReportsReceived")
 }
 
 model Account {
@@ -43,6 +48,7 @@ model Account {
   tradeOnly      Boolean       @default(false)
   screenshots    String
   googleVerified Boolean       @default(false)
+  isBanned       Boolean       @default(false)
   gameIdActive   Boolean       @default(false)
   status         String        @default("pending")
   verifiedByAi   Boolean       @default(false)
@@ -68,4 +74,30 @@ model Transaction {
   buyer           User     @relation("TransactionBuyer", fields: [buyerId], references: [id])
   seller          User     @relation("TransactionSeller", fields: [sellerId], references: [id])
   account         Account  @relation(fields: [accountId], references: [id])
+}
+
+model Chat {
+  id          Int      @id @default(autoincrement())
+  senderId    Int
+  receiverId  Int
+  message     String
+  createdAt   DateTime @default(now())
+  sender      User     @relation("SentChats", fields: [senderId], references: [id])
+  receiver    User     @relation("ReceivedChats", fields: [receiverId], references: [id])
+}
+
+model Settings {
+  key   String @id
+  value String
+}
+
+model Report {
+  id             Int      @id @default(autoincrement())
+  reporterId     Int
+  reportedUserId Int
+  reason         String
+  status         String   @default("open")
+  createdAt      DateTime @default(now())
+  reporter       User     @relation("ReportsMade", fields: [reporterId], references: [id])
+  reportedUser   User     @relation("ReportsReceived", fields: [reportedUserId], references: [id])
 }
